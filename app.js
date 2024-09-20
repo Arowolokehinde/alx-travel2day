@@ -94,4 +94,4 @@ app.all("*", (req, res, next) => {
 
 app.use(globalErrorHandler);
 
-module.export = app;
+module.exports = app;
