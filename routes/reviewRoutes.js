@@ -1,30 +1,28 @@
-const express = require("express");
-const reviewController = require("./../controllers/reviewController");
-const authController = require("./../controllers/authController");
+import express from "express";
+import { isAuthenticated } from "../middlewares/protectRoutes.js";
+import {
+  createReview,
+  deleteReview,
+  getAllReviews,
+  getReview,
+  setTourUserIds,
+  updateReview,
+} from "../controllers/reviewController.js";
+import restrictTo from "../middlewares/roleManager.js";
 
 const router = express.Router({ mergeParams: true });
 
-router.use(authController.protect);
+router.use(isAuthenticated);
 
 router
   .route("/")
-  .get(reviewController.getAllReviews)
-  .post(
-    authController.restrictTo("user"),
-    reviewController.setTourUserIds,
-    reviewController.createReview
-  );
+  .get(getAllReviews)
+  .post(restrictTo("user"), setTourUserIds, createReview);
 
 router
   .route("/:id")
-  .get(reviewController.getReview)
-  .patch(
-    authController.restrictTo("user", "admin"),
-    reviewController.updateReview
-  )
-  .delete(
-    authController.restrictTo("user", "admin"),
-    reviewController.deleteReview
-  );
+  .get(getReview)
+  .patch(restrictTo("user", "admin"), updateReview)
+  .delete(restrictTo("user", "admin"), deleteReview);
 
-module.exports = router;
+export default router;

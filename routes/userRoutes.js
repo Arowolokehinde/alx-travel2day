@@ -1,35 +1,67 @@
-const express = require('express');
-const userController = require('./../controllers/userController');
-const authController = require('./../controllers/authController');
+import express from "express";
+import
+{
+    forgotPassword,
+    login,
+    logout,
+    refreshToken,
+    resetPassword,
+    signUp,
+    updatePassword,
+    verifyAccount,
+} from "../controllers/authController.js";
+import { isAuthenticated } from "../middlewares/protectRoutes.js";
+import restrictTo from "../middlewares/roleManager.js";
+import
+{
+    createUser,
+    deleteMe,
+    deleteUser,
+    getAllUsers,
+    getMe,
+    getUser,
+    reactivateAccount,
+    resizeUserPhoto,
+    updateMe,
+    updateUser,
+    updateUserRole,
+    uploadUserPhoto,
+} from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.post('/signup', authController.signup);
-router.post('/login', authController.login);
-router.get('/logout', authController.logout);
 
-router.post('/forgotPassword', authController.forgotPassword);
-router.patch('/resetPassword/:token', authController.resetPassword);
+router.route("/verify-email").post(verifyAccount);
 
-// Protect all routes after this middleware
-router.use(authController.protect);
+router.route("/signup").post(signUp);
 
-router.patch('/updateMyPassword', authController.updatePassword);
-router.get('/me', userController.getMe, userController.getUser);
-router.patch('/updateMe', userController.updateMe);
-router.delete('/deleteMe', userController.deleteMe);
+router.route("/login").post(login);
 
-router.use(authController.restrictTo('admin'));
+router.route("/refresh-token").post(refreshToken);
 
-router
-  .route('/')
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+router.route("/forgot-password").post(forgotPassword);
 
-router
-  .route('/:id')
-  .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+router.route("/reset-password/:token").patch(resetPassword);
 
-module.exports = router;
+// Ensure that all the routes below are authenticated
+router.use(isAuthenticated);
+
+router.route("/logout").post(logout);
+router.route("/update-password").patch(updatePassword);
+router.get("/me", getMe, getUser);
+// router.patch("/update-me", uploadUserPhoto, resizeUserPhoto, updateMe);
+router.patch("/update-me", updateMe);
+router.delete("/delete-me", deleteMe);
+
+// Restrict the endpoints below to admin access only
+router.use(restrictTo("admin"));
+
+router.route("/")
+    .get(getAllUsers)
+    .post(createUser);
+
+router.route("/update-role/:id").patch(updateUserRole);
+router.route("/re-activate-user").patch(reactivateAccount);
+router.route("/:id").get(getUser).patch(updateUser).delete(deleteUser);
+
+export default router;
