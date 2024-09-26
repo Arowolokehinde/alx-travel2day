@@ -1,9 +1,9 @@
 # React + Vite
 
 
-# Project Title
+# Natour
 
-Natour is a dynamic tourism platform where users can easily explore, create, and manage personalized tours. Users can sign up, log in, create and delete tours, and access various adventure options. 
+Natour is a dynamic tourism platform where users can easily explore, create, and manage personalized tours. Users can sign up, log in, create and delete tours, and access various adventure options. With a seamless user interface, Natours offers an exciting way to discover new destinations and customize tours according to preferences, making travel planning effortless and enjoyable.
 
 ## Technologies Used
 
